@@ -7,7 +7,7 @@ from Task.DigitecTask import DigitecTask
 
 class DigitecTaskBot(TelegramTaskBot):
     def start(self, update, context):
-        self.TASKS[0].start([], update, context)
+        self.TASKS[0].start_command([], update, context)
 
 
 bot = DigitecTaskBot([DigitecTask])
