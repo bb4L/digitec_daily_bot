@@ -23,6 +23,7 @@ class DigitecTask(Task):
     generic = True
 
     def __init__(self, job_queue: JobQueue):
+        super().__init__(job_queue)
         self._start([], job_queue, 'General Digitec Task')
 
     def callback(self, context: telegram.ext.CallbackContext):
@@ -46,16 +47,29 @@ class DigitecTask(Task):
             context.bot.send_message(chat_id=user, text=f'Todays new offer: {link}', disable_notification=True)
 
     def start(self, jobs: List[telegram.ext.Job], update: telegram.Update, context: telegram.ext.CallbackContext):
-        self.save_user(update.callback_query.message.chat_id)
-        logging.info(f'User {update.callback_query.message.chat_id} subscribed')
+        self._handle_start(context, update.callback_query.message.chat_id)
+
+    def start_command(self, update: telegram.Update, context: telegram.ext.CallbackContext):
+        self._handle_start(context, update.message.chat_id)
+
+    def _handle_start(self, context: telegram.ext.CallbackContext, chat_id: str):
+        context.bot.send_message(chat_id=chat_id,
+                                 text=f'Thank you for subscribing')
+        self.save_user(chat_id)
+        logging.info(f'User {chat_id} subscribed')
 
     def stop(self, jobs: List[telegram.ext.Job], update: telegram.Update, context: telegram.ext.CallbackContext):
+        self.handle_stop(context, update.callback_query.message.chat_id)
+
+    def stop_command(self, update: telegram.Update, context: telegram.ext.CallbackContext):
+        self.handle_stop(context, update.message.chat_id)
+
+    def handle_stop(self, context: telegram.ext.CallbackContext, chat_id: str):
         users = self.load_users()
-        users.remove(update.callback_query.message.chat_id)
+        users.remove(chat_id)
         self.save_to_json(users)
-        logging.info(f'User {update.callback_query.message.chat_id} unsubscribed')
-        context.bot.send_message(chat_id=update.callback_query.message.chat_id,
-                                 text=f'You sucesfully unsubscribed')
+        logging.info(f'User {chat_id} unsubscribed')
+        context.bot.send_message(chat_id=chat_id, text=f'You succesfully unsubscribed')
 
     def get_inline_keyboard(self):
         return [
