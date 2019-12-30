@@ -20,6 +20,7 @@ class DigitecTask(Task):
     url = 'https://www.digitec.ch/de/LiveShopping/81'
     host = 'www.digitec.ch'
     filename = 'digitec_subscriptions'
+    generic = True
 
     def __init__(self, job_queue: JobQueue):
         self._start([], job_queue, 'General Digitec Task')
