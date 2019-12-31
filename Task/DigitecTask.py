@@ -3,7 +3,6 @@ from datetime import timedelta, time
 from bs4 import BeautifulSoup
 from requests import Response
 from telegram import InlineKeyboardButton
-from telegram.ext import JobQueue
 from telegramtaskbot import UrlTask
 
 
@@ -14,10 +13,6 @@ class DigitecTask(UrlTask):
     url = 'https://www.digitec.ch/de/LiveShopping/81'
     host = 'www.digitec.ch'
     filename = 'digitec_subscriptions'
-
-    def __init__(self, job_queue: JobQueue):
-        super().__init__(job_queue)
-        self._start([], job_queue, 'General Digitec Task')
 
     def handle_response(self, response: Response):
         soup = BeautifulSoup(response.text, 'html.parser')
