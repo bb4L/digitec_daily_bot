@@ -1,8 +1,10 @@
-import logging
+import logging.config
 
 from telegramtaskbot import TelegramTaskBot
 
 from Task.DigitecTask import DigitecTask
+
+logging.config.fileConfig('logging.conf')
 
 
 class DigitecTaskBot(TelegramTaskBot):
@@ -11,6 +13,5 @@ class DigitecTaskBot(TelegramTaskBot):
 
 
 bot = DigitecTaskBot([DigitecTask])
-
 bot.run()
 logging.info('Bot running!')
