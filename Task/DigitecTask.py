@@ -1,6 +1,6 @@
 from datetime import timedelta, time
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
 from requests import Response
 from telegram import InlineKeyboardButton
 from telegramtaskbot import UrlTask
@@ -15,11 +15,14 @@ class DigitecTask(UrlTask):
     filename = 'digitec_subscriptions'
 
     def handle_response(self, response: Response):
+        self.logger.debug('Handle response')
         soup = BeautifulSoup(response.text, 'html.parser')
-        all_a = soup.find_all('a', class_='ZZ7j ZZ7l', href=True)
-        href = all_a[0]['href']
+        article: Tag = soup.find_all('article')[0]
+        href = [child for child in article.children if child.name == 'a'][0]['href']
         link = (self.host + href).replace('/de/', '/en/')
-        return f'Todays new offer: {link}'
+        result = f'Todays new offer: {link}'
+        self.logger.debug(f'Result is: \"{result}\"')
+        return result
 
     def get_inline_keyboard(self):
         return [InlineKeyboardButton(f"Get actual Daily Offer", callback_data=self.job_actual_value)]
