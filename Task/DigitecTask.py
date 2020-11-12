@@ -11,7 +11,7 @@ class DigitecTask(UrlTask):
     repeat_time = timedelta(days=1)
     first_time = time(hour=0, minute=30)
     job_name = 'digitec_daily'
-    url = 'https://www.digitec.ch/de/LiveShopping/81'
+    url = 'https://www.digitec.ch/en/LiveShopping/81'
     host = 'www.digitec.ch'
     filename = 'digitec_subscriptions'
 
@@ -33,10 +33,10 @@ class DigitecTask(UrlTask):
                 0].find('span', class_=['appendix'])
 
             new_price = prices.parent.strong.text.strip()
-            original_price = prices.text.split()[-1]
+            original_price = prices.text
 
             if new_price and original_price:
-                price_string = f'\n{new_price} instead of {original_price}'
+                price_string = f'\n{new_price} {original_price}'
         except Exception as e:
             self.logger.debug(
                 f'Exception while getting prices for \"{result}\"')
